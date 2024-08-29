@@ -1,20 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
 import React, { useState } from 'react';
-import * as Yup from 'yup';
-
-const SignupSchema = Yup.object().shape({
-  email: Yup.string()
-    .email('Invalid email')
-    .required('Required'),
-  password: Yup.string()
-    .min(6, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
-});
 
 function App() {
-
   const [values, setValues] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
 
@@ -26,22 +14,32 @@ function App() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const validate = () => {
+    const newErrors = {};
+    if (!values.email) {
+      newErrors.email = 'Required';
+    } else if (!/\S+@\S+\.\S+/.test(values.email)) {
+      newErrors.email = 'Invalid email address';
+    }
+    if (!values.password) {
+      newErrors.password = 'Required';
+    } else if (values.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+    return newErrors;
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      await SignupSchema.validate(values, { abortEarly: false });
+    const formErrors = validate();
+    if (Object.keys(formErrors).length === 0) {
       setErrors({});
       // Handle form submission
       console.log('Form submitted successfully:', values);
-    } catch (err) {
-      const validationErrors = {};
-      err.inner.forEach((error) => {
-        validationErrors[error.path] = error.message;
-      });
-      setErrors(validationErrors);
+    } else {
+      setErrors(formErrors);
     }
   };
-
 
   return (
     <form onSubmit={handleSubmit}>
@@ -68,6 +66,6 @@ function App() {
       <button type="submit">Submit</button>
     </form>
   );
-}
+};
 
 export default App;
