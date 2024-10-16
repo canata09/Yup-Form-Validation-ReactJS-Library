@@ -7,20 +7,20 @@ import AuthCarousel from './AuthCarousel';
 import { Button, TextInput } from "flowbite-react";
 import './Dene.css';
 
-const validationSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email address').required('Email is required'),
-    phone: Yup.string().matches(/^5\d{9}$/, 'Phone number must start with 05 and be 10 digits long.').required('Phone number is required'),
-    firstName: Yup.string().required('First name is required'),
-    lastName: Yup.string().required('Last name is required'),
-    password: Yup.string().required('Password is required'),
-    city: Yup.string().required('City is required'),
-    district: Yup.string().required('District is required'),
-    classLevel: Yup.string().required('Class is required'),
-    branch: Yup.string().required('Branch is required'),
-    school: Yup.string().required('School is required'),
-});
+function App() {
+    const validationSchema = Yup.object().shape({
+        email: Yup.string().email('Invalid email address').required('Email is required'),
+        phone: Yup.string().matches(/^5\d{9}$/, 'Phone number must start with 05 and be 10 digits long.').required('Phone number is required'),
+        firstName: Yup.string().required('First name is required'),
+        lastName: Yup.string().required('Last name is required'),
+        password: Yup.string().required('Password is required'),
+        city: Yup.string().required('City is required'),
+        district: Yup.string().required('District is required'),
+        classLevel: Yup.string().required('Class is required'),
+        branch: Yup.string().required('Branch is required'),
+        school: Yup.string().required('School is required'),
+    });
 
-const Dene = ({ onLogin }) => {
   const [values, setValues] = useState({
     email: '', phone: '', firstName: '', lastName: '', username: '', password: '',
     city: '', district: '', classLevel: '', branch: '', school: ''
@@ -80,4 +80,4 @@ const Dene = ({ onLogin }) => {
     );
 };
 
-export default Dene;
+export default App;
