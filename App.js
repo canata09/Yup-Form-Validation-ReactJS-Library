@@ -8,6 +8,7 @@ const App = () => {
   const [countryCode, setCountryCode] = useState('TR');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [city, setCity] = useState('');
   const [district, setDistrict] = useState('');
@@ -24,9 +25,9 @@ const App = () => {
   const [classLevelError, setClassLevelError] = useState('');
   const [branchError, setBranchError] = useState('');
   const [schoolError, setSchoolError] = useState('');
+  const [message, setMessage] = useState('');
+  const [errors, setErrors] = useState('');
 
-
-  // Define Yup validation schema
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .email('Invalid email address')
@@ -68,7 +69,6 @@ const App = () => {
       .catch((err) => setLastNameError(err.message));
   };
 
-
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
     validationSchema
@@ -100,7 +100,6 @@ const App = () => {
       .then(() => setClassLevelError(''))
       .catch((err) => setClassLevelError(err.message));
   };
-
 
   const handleBranchChange = (e) => {
     setBranch(e.target.value);
@@ -136,166 +135,178 @@ const App = () => {
       .catch((err) => setPhoneError(err.message));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    validationSchema
-      .validate({
-        email,
-        phone,
-        firstName,
-        lastName,
-        password,
-        city,
-        district,
-        classLevel,
-        branch,
-        school,
-      })
-      .then(() => {
-        alert('Form submitted successfully');
-      })
-      .catch((err) => {
-        if (err.path === 'email') {
-          setEmailError(err.message);
-        } else if (err.path === 'phone') {
-          setPhoneError(err.message);
-        } else if (err.path === 'firstName') {
-          setFirstNameError(err.message);
-        } else if (err.path === 'lastName') {
-          setLastNameError(err.message);
-        } else if (err.path === 'password') {
-          setPasswordError(err.message);
-        } else if (err.path === 'city') {
-          setCityError(err.message);
-        } else if (err.path === 'district') {
-          setDistrictError(err.message);
-        } else if (err.path === 'classLevel') {
-          setClassLevelError(err.message);
-        } else if (err.path === 'branch') {
-          setBranchError(err.message);
-        } else if (err.path === 'school') {
-          setSchoolError(err.message);
-        }
-        alert('Please fix the errors before submitting');
-      });
+
+    // Validate using Yup
+    try {
+      await validationSchema.validate(
+        {
+          email,
+          phone,
+          firstName,
+          lastName,
+          password,
+          city,
+          district,
+          classLevel,
+          branch,
+          school,
+        },
+        { abortEarly: false }
+      );
+
+      // Fetch user data from the server
+      const response = await fetch('http://localhost:8000/data');
+      const data = await response.json();
+
+      // Ensure data is an array
+      const users = Array.isArray(data) ? data : [];
+
+      // Validate input and perform login
+      const user = login(users, username, password);
+      if (user) {
+        onLogin(username);
+        setMessage(`Welcome, ${user.username}!`);
+      } else {
+        setMessage('User not found.');
+      }
+    } catch (err) {
+      // Set validation errors
+      const validationErrors = err.inner.reduce((acc, error) => {
+        acc[error.path] = error.message;
+        return acc;
+      }, {});
+      setErrors(validationErrors);
+      setMessage('Please fix the errors before submitting');
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form-container">
+    <>
+      <form onSubmit={handleSubmit} className="form-container">
 
-      <div className="form-group">
-        <label>First Name</label>
-        <input type="text"
-          value={firstName}
-          onChange={handleFirstNameChange}
-          className="form-control" />
-        {firstNameError && <p className="error-message">{firstNameError}</p>}
-      </div>
-
-      <div className="form-group">
-        <label>Last Name</label>
-        <input type="text"
-          value={lastName}
-          onChange={handleLastNameChange}
-          className="form-control" />
-        {lastNameError && <p className="error-message">{lastNameError}</p>}
-      </div>
-
-      <div className="form-group">
-        <label>Password</label>
-        <input type="password"
-          value={password}
-          onChange={handlePasswordChange}
-          className="form-control" />
-        {passwordError && <p className="error-message">{passwordError}</p>}
-      </div>
-
-      <div className="form-group">
-        <label>City</label>
-        <input type="text"
-          value={city}
-          onChange={handleCityChange}
-          className="form-control" />
-        {cityError && <p className="error-message">{cityError}</p>}
-      </div>
-
-      <div className="form-group">
-        <label>District</label>
-        <input type="text"
-          value={district}
-          onChange={handleDistrictChange}
-          className="form-control" />
-        {districtError && <p className="error-message">{districtError}</p>}
-      </div>
-
-      <div className="form-group">
-        <label>Class</label>
-        <input type="text"
-          value={classLevel}
-          onChange={handleClassLevelChange}
-          className="form-control" />
-        {classLevelError && <p className="error-message">{classLevelError}</p>}
-      </div>
-
-      <div className="form-group">
-        <label>Branch</label>
-        <input type="text"
-          value={branch}
-          onChange={handleBranchChange}
-          className="form-control" />
-        {branchError && <p className="error-message">{branchError}</p>}
-      </div>
-
-      <div className="form-group">
-        <label>School</label>
-        <input type="text"
-          value={school}
-          onChange={handleSchoolChange}
-          className="form-control" />
-        {schoolError && <p className="error-message">{schoolError}</p>}
-      </div>
-
-      <div className="form-group">
-        <label>Email</label>
-        <input
-          type="email"
-          value={email}
-          onChange={handleEmailChange}
-          className="form-control"
-          placeholder="Enter your email"
-        />
-        {emailError && <p className="error-message">{emailError}</p>}
-      </div>
-
-      <div className="form-group">
-        <label>Mobile number</label>
-        <div className="phone-input">
-          <select
-            value={countryCode}
-            onChange={(e) => setCountryCode(e.target.value)}
-            className="country-code"
-          >
-            <option value="TR">TR +90</option>
-          </select>
-          <input
-            type="text"
-            value={phone}
-            onChange={handlePhoneChange}
-            className="form-control"
-            placeholder="Enter your mobile number"
-          />
+        <div className="form-group">
+          <label>First Name</label>
+          <input type="text"
+            value={firstName}
+            onChange={handleFirstNameChange}
+            className="form-control" />
+          {firstNameError && <p className="error-message">{firstNameError}</p>}
         </div>
-        {phoneError && <p className="error-message">{phoneError}</p>}
-      </div>
 
-      <button type="submit" className="submit-button">
-        Continue
-      </button>
+        <div className="form-group">
+          <label>Last Name</label>
+          <input type="text"
+            value={lastName}
+            onChange={handleLastNameChange}
+            className="form-control" />
+          {lastNameError && <p className="error-message">{lastNameError}</p>}
+        </div>
 
-      <p className="terms-message">
-        We’ll text this number to verify your account. Message and data rates may apply. By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-      </p>
-    </form>
+        <div className="form-group">
+          <label>Password</label>
+          <input type="password"
+            value={password}
+            onChange={handlePasswordChange}
+            className="form-control" />
+          {passwordError && <p className="error-message">{passwordError}</p>}
+        </div>
+
+        <div className="form-group">
+          <label>City</label>
+          <input type="text"
+            value={city}
+            onChange={handleCityChange}
+            className="form-control" />
+          {cityError && <p className="error-message">{cityError}</p>}
+        </div>
+
+        <div className="form-group">
+          <label>District</label>
+          <input type="text"
+            value={district}
+            onChange={handleDistrictChange}
+            className="form-control" />
+          {districtError && <p className="error-message">{districtError}</p>}
+        </div>
+
+        <div className="form-group">
+          <label>Class</label>
+          <input type="text"
+            value={classLevel}
+            onChange={handleClassLevelChange}
+            className="form-control" />
+          {classLevelError && <p className="error-message">{classLevelError}</p>}
+        </div>
+
+        <div className="form-group">
+          <label>Branch</label>
+          <input type="text"
+            value={branch}
+            onChange={handleBranchChange}
+            className="form-control" />
+          {branchError && <p className="error-message">{branchError}</p>}
+        </div>
+
+        <div className="form-group">
+          <label>School</label>
+          <input type="text"
+            value={school}
+            onChange={handleSchoolChange}
+            className="form-control" />
+          {schoolError && <p className="error-message">{schoolError}</p>}
+        </div>
+
+        <div className="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={handleEmailChange}
+            className="form-control"
+            placeholder="Enter your email"
+          />
+          {emailError && <p className="error-message">{emailError}</p>}
+        </div>
+
+        <div className="form-group">
+          <label>Mobile number</label>
+          <div className="phone-input">
+            <select
+              value={countryCode}
+              onChange={(e) => setCountryCode(e.target.value)}
+              className="country-code"
+            >
+              <option value="TR">TR +90</option>
+            </select>
+            <input
+              type="text"
+              value={phone}
+              onChange={handlePhoneChange}
+              className="form-control"
+              placeholder="Enter your mobile number"
+            />
+          </div>
+          {phoneError && <p className="error-message">{phoneError}</p>}
+        </div>
+
+        <button type="submit" className="submit-button">
+          Continue
+        </button>
+
+        <p className="terms-message">
+          We’ll text this number to verify your account. Message and data rates may apply. By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        </p>
+      </form>
+
+      <nav>
+        <ul>
+          <li><Link to="/login">Giriş Yap</Link></li>
+        </ul>
+      </nav>
+      {message && <p>{message}</p>}
+    </>
   );
 };
 
