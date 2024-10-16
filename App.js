@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
-import { login } from './AuthController';
 import * as Yup from 'yup';
-import styles from './Login.module.css';
-import { Link } from "react-router-dom";
-import AuthCarousel from './AuthCarousel';
-import { Button, TextInput } from "flowbite-react";
-import './Dene.css';
+import './App.css';
 
 function App() {
     const validationSchema = Yup.object().shape({
