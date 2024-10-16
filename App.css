@@ -1,0 +1,102 @@
+/* Form container */
+.form-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Label styling */
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #1f1f1f;
+}
+
+/* Input fields */
+.form-control {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.form-control:focus {
+  border-color: #1a73e8; /* Google-style blue */
+  box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.2); /* Highlight on focus */
+}
+
+/* Phone number input container */
+.phone-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Country code dropdown */
+.country-code {
+  background-color: #f1f3f4;
+  border: 1px solid #ccc;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Error message styling */
+.error-message {
+  color: #fff; 
+  font-size: 12px;
+  margin-bottom: 8px;
+  background-color: #d93025;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+/* Submit button */
+.submit-button {
+  background-color: #1a73e8; /* Blue button color */
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.submit-button:hover {
+  background-color: #155bb5;
+}
+
+/* Terms and conditions message */
+.terms-message {
+  font-size: 12px;
+  color: #5f6368;
+  margin-top: 16px;
+}
+
+.terms-message a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.terms-message a:hover {
+  text-decoration: underline;
+}
+
+/* ReCaptcha and policy */
+.recaptcha {
+  font-size: 12px;
+  color: #5f6368;
+  text-align: center;
+  margin-top: 12px;
+}
