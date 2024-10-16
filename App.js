@@ -1,33 +1,14 @@
+import logo from './logo.svg';
+import './App.css';
 import React, { useState } from 'react';
 import * as Yup from 'yup';
-import './App.css';
 
-const App = () => {
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [countryCode, setCountryCode] = useState('TR');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [city, setCity] = useState('');
-  const [district, setDistrict] = useState('');
-  const [classLevel, setClassLevel] = useState('');
-  const [branch, setBranch] = useState('');
-  const [school, setSchool] = useState('');
-  const [phoneError, setPhoneError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [firstNameError, setFirstNameError] = useState('');
-  const [lastNameError, setLastNameError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [cityError, setCityError] = useState('');
-  const [districtError, setDistrictError] = useState('');
-  const [classLevelError, setClassLevelError] = useState('');
-  const [branchError, setBranchError] = useState('');
-  const [schoolError, setSchoolError] = useState('');
-  const [message, setMessage] = useState('');
-  const [errors, setErrors] = useState('');
 
+
+
+
+
+function App() {
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .email('Invalid email address')
@@ -39,8 +20,12 @@ const App = () => {
       .required('First name is required'),
     lastName: Yup.string()
       .required('Last name is required'),
+    username: Yup.string()
+      .required('Username is required'),
     password: Yup.string()
-      .required('Password is required'),
+      .min(6, 'Too Short!')
+      .max(50, 'Too Long!')
+      .required('Required'),
     city: Yup.string()
       .required('City is required'),
     district: Yup.string()
@@ -53,243 +38,167 @@ const App = () => {
       .required('School is required'),
   });
 
-  const handleFirstNameChange = (e) => {
-    setFirstName(e.target.value);
-    validationSchema
-      .validateAt('firstName', { firstName: e.target.value })
-      .then(() => setFirstNameError(''))
-      .catch((err) => setFirstNameError(err.message));
+
+
+
+  const [values, setValues] = useState({
+    email: '', phone: '', firstName: '', lastName: '', username: '', password: '',
+    city: '', district: '', classLevel: '', branch: '', school: ''
+  });
+  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState('');
+
+
+
+
+
+
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setValues({
+      ...values,
+      [name]: value,
+    });
   };
 
-  const handleLastNameChange = (e) => {
-    setLastName(e.target.value);
-    validationSchema
-      .validateAt('lastName', { lastName: e.target.value })
-      .then(() => setLastNameError(''))
-      .catch((err) => setLastNameError(err.message));
-  };
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-    validationSchema
-      .validateAt('password', { password: e.target.value })
-      .then(() => setPasswordError(''))
-      .catch((err) => setPasswordError(err.message));
-  };
 
-  const handleCityChange = (e) => {
-    setCity(e.target.value);
-    validationSchema
-      .validateAt('city', { city: e.target.value })
-      .then(() => setCityError(''))
-      .catch((err) => setCityError(err.message));
-  };
 
-  const handleDistrictChange = (e) => {
-    setDistrict(e.target.value);
-    validationSchema
-      .validateAt('district', { district: e.target.value })
-      .then(() => setDistrictError(''))
-      .catch((err) => setDistrictError(err.message));
-  };
 
-  const handleClassLevelChange = (e) => {
-    setClassLevel(e.target.value);
-    validationSchema
-      .validateAt('classLevel', { classLevel: e.target.value })
-      .then(() => setClassLevelError(''))
-      .catch((err) => setClassLevelError(err.message));
-  };
-
-  const handleBranchChange = (e) => {
-    setBranch(e.target.value);
-    validationSchema
-      .validateAt('branch', { branch: e.target.value })
-      .then(() => setBranchError(''))
-      .catch((err) => setBranchError(err.message));
-  };
-
-  const handleSchoolChange = (e) => {
-    setSchool(e.target.value);
-    validationSchema
-      .validateAt('school', { school: e.target.value })
-      .then(() => setSchoolError(''))
-      .catch((err) => setSchoolError(err.message));
-  };
-
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-    validationSchema
-      .validateAt('email', { email: e.target.value })
-      .then(() => setEmailError(''))
-      .catch((err) => setEmailError(err.message));
-  };
-
-  const handlePhoneChange = (e) => {
-    const phoneInput = e.target.value.replace(/\D/g, ''); // Remove non-numeric characters
-    setPhone(phoneInput);
-
-    validationSchema
-      .validateAt('phone', { phone: phoneInput })
-      .then(() => setPhoneError(''))
-      .catch((err) => setPhoneError(err.message));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validate using Yup
     try {
-      await validationSchema.validate(
-        {
-          email,
-          phone,
-          firstName,
-          lastName,
-          password,
-          city,
-          district,
-          classLevel,
-          branch,
-          school,
-        },
-        { abortEarly: false }
-      );
-
-      // Fetch user data from the server
-      const response = await fetch('http://localhost:8000/data');
-      const data = await response.json();
-
-      // Ensure data is an array
-      const users = Array.isArray(data) ? data : [];
-
-      // Validate input and perform login
-      const user = login(users, username, password);
-      if (user) {
-        onLogin(username);
-        setMessage(`Welcome, ${user.username}!`);
-      } else {
-        setMessage('User not found.');
-      }
+      await validationSchema.validate(values, { abortEarly: false });
+      setErrors({});
+      // Handle form submission
+      console.log('Form submitted successfully:', values);
     } catch (err) {
-      // Set validation errors
-      const validationErrors = err.inner.reduce((acc, error) => {
-        acc[error.path] = error.message;
-        return acc;
-      }, {});
+      const validationErrors = {};
+      err.inner.forEach((error) => {
+        validationErrors[error.path] = error.message;
+      });
       setErrors(validationErrors);
-      setMessage('Please fix the errors before submitting');
     }
   };
 
+
+
   return (
+
     <>
       <form onSubmit={handleSubmit} className="form-container">
 
         <div className="form-group">
           <label>First Name</label>
           <input type="text"
-            value={firstName}
-            onChange={handleFirstNameChange}
+            value={values.firstName}
+            onChange={handleChange}
             className="form-control" />
-          {firstNameError && <p className="error-message">{firstNameError}</p>}
+          {errors.firstName && <p className="error-message">{errors.firstName}</p>}
         </div>
 
         <div className="form-group">
           <label>Last Name</label>
           <input type="text"
-            value={lastName}
-            onChange={handleLastNameChange}
+            value={values.lastName}
+            onChange={handleChange}
             className="form-control" />
-          {lastNameError && <p className="error-message">{lastNameError}</p>}
+          {errors.lastName && <p className="error-message">{errors.lastName}</p>}
+        </div>
+
+
+        <div className="form-group">
+          <label>Username</label>
+          <input type="text"
+            value={values.username}
+            onChange={handleChange}
+            className="form-control" />
+          {errors.username && <p className="error-message">{errors.username}</p>}
         </div>
 
         <div className="form-group">
           <label>Password</label>
           <input type="password"
-            value={password}
-            onChange={handlePasswordChange}
+            value={values.password}
+            onChange={handleChange}
             className="form-control" />
-          {passwordError && <p className="error-message">{passwordError}</p>}
+          {errors.password && <p className="error-message">{errors.password}</p>}
         </div>
+
 
         <div className="form-group">
           <label>City</label>
           <input type="text"
-            value={city}
-            onChange={handleCityChange}
+            value={values.city}
+            onChange={handleChange}
             className="form-control" />
-          {cityError && <p className="error-message">{cityError}</p>}
+          {errors.city && <p className="error-message">{errors.city}</p>}
         </div>
 
         <div className="form-group">
           <label>District</label>
           <input type="text"
-            value={district}
-            onChange={handleDistrictChange}
+            value={values.district}
+            onChange={handleChange}
             className="form-control" />
-          {districtError && <p className="error-message">{districtError}</p>}
+          {errors.district && <p className="error-message">{errors.district}</p>}
         </div>
 
         <div className="form-group">
           <label>Class</label>
           <input type="text"
-            value={classLevel}
-            onChange={handleClassLevelChange}
+            value={values.classLevel}
+            onChange={handleChange}
             className="form-control" />
-          {classLevelError && <p className="error-message">{classLevelError}</p>}
+          {errors.classLevel && <p className="error-message">{errors.classLevel}</p>}
         </div>
 
         <div className="form-group">
           <label>Branch</label>
           <input type="text"
-            value={branch}
-            onChange={handleBranchChange}
+            value={values.branch}
+            onChange={handleChange}
             className="form-control" />
-          {branchError && <p className="error-message">{branchError}</p>}
+          {errors.branch && <p className="error-message">{errors.branch}</p>}
         </div>
 
         <div className="form-group">
           <label>School</label>
           <input type="text"
-            value={school}
-            onChange={handleSchoolChange}
+            value={values.school}
+            onChange={handleChange}
             className="form-control" />
-          {schoolError && <p className="error-message">{schoolError}</p>}
+          {errors.school && <p className="error-message">{errors.school}</p>}
         </div>
 
         <div className="form-group">
           <label>Email</label>
           <input
             type="email"
-            value={email}
-            onChange={handleEmailChange}
+            value={values.email}
+            onChange={handleChange}
             className="form-control"
             placeholder="Enter your email"
           />
-          {emailError && <p className="error-message">{emailError}</p>}
+          {errors.email && <p className="error-message">{errors.email}</p>}
         </div>
 
         <div className="form-group">
           <label>Mobile number</label>
-          <div className="phone-input">
-            <select
-              value={countryCode}
-              onChange={(e) => setCountryCode(e.target.value)}
-              className="country-code"
-            >
-              <option value="TR">TR +90</option>
-            </select>
-            <input
-              type="text"
-              value={phone}
-              onChange={handlePhoneChange}
-              className="form-control"
-              placeholder="Enter your mobile number"
-            />
-          </div>
-          {phoneError && <p className="error-message">{phoneError}</p>}
+          <input
+            type="email"
+            value={values.phone}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="Enter your mobile number"
+          />
+          {errors.phone && <p className="error-message">{errors.phone}</p>}
         </div>
+
+
 
         <button type="submit" className="submit-button">
           Continue
@@ -300,14 +209,10 @@ const App = () => {
         </p>
       </form>
 
-      <nav>
-        <ul>
-          <li><Link to="/login">Giriş Yap</Link></li>
-        </ul>
-      </nav>
+
       {message && <p>{message}</p>}
     </>
-  );
-};
 
+  );
+}
 export default App;
