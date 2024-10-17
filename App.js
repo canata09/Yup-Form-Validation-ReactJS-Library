@@ -93,7 +93,9 @@ function App() {
 
         <div className="form-group">
           <label>First Name</label>
-          <input type="text"
+          <input
+            type="text"
+            name="firstName"
             value={values.firstName}
             onChange={handleChange}
             className="form-control" />
@@ -102,7 +104,9 @@ function App() {
 
         <div className="form-group">
           <label>Last Name</label>
-          <input type="text"
+          <input
+            type="text"
+            name="lastName"
             value={values.lastName}
             onChange={handleChange}
             className="form-control" />
@@ -112,7 +116,9 @@ function App() {
 
         <div className="form-group">
           <label>Username</label>
-          <input type="text"
+          <input
+            type="text"
+            name="username"
             value={values.username}
             onChange={handleChange}
             className="form-control" />
@@ -121,7 +127,9 @@ function App() {
 
         <div className="form-group">
           <label>Password</label>
-          <input type="password"
+          <input
+            type="password"
+            name="password"
             value={values.password}
             onChange={handleChange}
             className="form-control" />
@@ -131,7 +139,9 @@ function App() {
 
         <div className="form-group">
           <label>City</label>
-          <input type="text"
+          <input
+            type="text"
+            name="city"
             value={values.city}
             onChange={handleChange}
             className="form-control" />
@@ -140,7 +150,9 @@ function App() {
 
         <div className="form-group">
           <label>District</label>
-          <input type="text"
+          <input
+            type="text"
+            name="district"
             value={values.district}
             onChange={handleChange}
             className="form-control" />
@@ -149,7 +161,9 @@ function App() {
 
         <div className="form-group">
           <label>Class</label>
-          <input type="text"
+          <input
+            type="text"
+            name="classLevel"
             value={values.classLevel}
             onChange={handleChange}
             className="form-control" />
@@ -158,7 +172,9 @@ function App() {
 
         <div className="form-group">
           <label>Branch</label>
-          <input type="text"
+          <input
+            type="text"
+            name="branch"
             value={values.branch}
             onChange={handleChange}
             className="form-control" />
@@ -167,7 +183,9 @@ function App() {
 
         <div className="form-group">
           <label>School</label>
-          <input type="text"
+          <input
+            type="text"
+            name="school"
             value={values.school}
             onChange={handleChange}
             className="form-control" />
@@ -178,6 +196,7 @@ function App() {
           <label>Email</label>
           <input
             type="email"
+            name="email"
             value={values.email}
             onChange={handleChange}
             className="form-control"
@@ -190,6 +209,7 @@ function App() {
           <label>Mobile number</label>
           <input
             type="email"
+            name="phone"
             value={values.phone}
             onChange={handleChange}
             className="form-control"
