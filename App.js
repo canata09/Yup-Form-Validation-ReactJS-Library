@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import * as Yup from 'yup';
 import './App.css';
 
 const App = () => {
@@ -28,157 +27,121 @@ const App = () => {
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState('');
 
-  const validationSchema = Yup.object().shape({
-    email: Yup.string()
-      .email('Invalid email address')
-      .required('Email is required'),
-    phone: Yup.string()
-      .matches(/^5\d{9}$/, 'Phone number must start with 05 and be 10 digits long.')
-      .required('Phone number is required'),
-    firstName: Yup.string()
-      .required('First name is required'),
-    lastName: Yup.string()
-      .required('Last name is required'),
-    password: Yup.string()
-      .required('Password is required'),
-    city: Yup.string()
-      .required('City is required'),
-    district: Yup.string()
-      .required('District is required'),
-    classLevel: Yup.string()
-      .required('Class is required'),
-    branch: Yup.string()
-      .required('Branch is required'),
-    school: Yup.string()
-      .required('School is required'),
-  });
+  const validateEmail = (value) => {
+    if (!value) return 'Email is required';
+    if (!/\S+@\S+\.\S+/.test(value)) return 'Invalid email address';
+    return '';
+  };
+
+  const validatePhone = (value) => {
+    if (!value) return 'Phone number is required';
+    if (!/^5\d{9}$/.test(value)) return 'Phone number must start with 05 and be 10 digits long.';
+    return '';
+  };
+
+  const validateRequired = (value, fieldName) => {
+    if (!value) return `${fieldName} is required`;
+    return '';
+  };
 
   const handleFirstNameChange = (e) => {
-    setFirstName(e.target.value);
-    validationSchema
-      .validateAt('firstName', { firstName: e.target.value })
-      .then(() => setFirstNameError(''))
-      .catch((err) => setFirstNameError(err.message));
+    const value = e.target.value;
+    setFirstName(value);
+    setFirstNameError(validateRequired(value, 'First name'));
   };
 
   const handleLastNameChange = (e) => {
-    setLastName(e.target.value);
-    validationSchema
-      .validateAt('lastName', { lastName: e.target.value })
-      .then(() => setLastNameError(''))
-      .catch((err) => setLastNameError(err.message));
+    const value = e.target.value;
+    setLastName(value);
+    setLastNameError(validateRequired(value, 'Last name'));
   };
 
   const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-    validationSchema
-      .validateAt('password', { password: e.target.value })
-      .then(() => setPasswordError(''))
-      .catch((err) => setPasswordError(err.message));
+    const value = e.target.value;
+    setPassword(value);
+    setPasswordError(validateRequired(value, 'Password'));
   };
 
   const handleCityChange = (e) => {
-    setCity(e.target.value);
-    validationSchema
-      .validateAt('city', { city: e.target.value })
-      .then(() => setCityError(''))
-      .catch((err) => setCityError(err.message));
+    const value = e.target.value;
+    setCity(value);
+    setCityError(validateRequired(value, 'City'));
   };
 
   const handleDistrictChange = (e) => {
-    setDistrict(e.target.value);
-    validationSchema
-      .validateAt('district', { district: e.target.value })
-      .then(() => setDistrictError(''))
-      .catch((err) => setDistrictError(err.message));
+    const value = e.target.value;
+    setDistrict(value);
+    setDistrictError(validateRequired(value, 'District'));
   };
 
   const handleClassLevelChange = (e) => {
-    setClassLevel(e.target.value);
-    validationSchema
-      .validateAt('classLevel', { classLevel: e.target.value })
-      .then(() => setClassLevelError(''))
-      .catch((err) => setClassLevelError(err.message));
+    const value = e.target.value;
+    setClassLevel(value);
+    setClassLevelError(validateRequired(value, 'Class'));
   };
 
   const handleBranchChange = (e) => {
-    setBranch(e.target.value);
-    validationSchema
-      .validateAt('branch', { branch: e.target.value })
-      .then(() => setBranchError(''))
-      .catch((err) => setBranchError(err.message));
+    const value = e.target.value;
+    setBranch(value);
+    setBranchError(validateRequired(value, 'Branch'));
   };
 
   const handleSchoolChange = (e) => {
-    setSchool(e.target.value);
-    validationSchema
-      .validateAt('school', { school: e.target.value })
-      .then(() => setSchoolError(''))
-      .catch((err) => setSchoolError(err.message));
+    const value = e.target.value;
+    setSchool(value);
+    setSchoolError(validateRequired(value, 'School'));
   };
 
   const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-    validationSchema
-      .validateAt('email', { email: e.target.value })
-      .then(() => setEmailError(''))
-      .catch((err) => setEmailError(err.message));
+    const value = e.target.value;
+    setEmail(value);
+    setEmailError(validateEmail(value));
   };
 
   const handlePhoneChange = (e) => {
     const phoneInput = e.target.value.replace(/\D/g, ''); // Remove non-numeric characters
     setPhone(phoneInput);
-
-    validationSchema
-      .validateAt('phone', { phone: phoneInput })
-      .then(() => setPhoneError(''))
-      .catch((err) => setPhoneError(err.message));
+    setPhoneError(validatePhone(phoneInput));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate all fields before submission
+    const newErrors = {
+      email: validateEmail(email),
+      phone: validatePhone(phone),
+      firstName: validateRequired(firstName, 'First name'),
+      lastName: validateRequired(lastName, 'Last name'),
+      password: validateRequired(password, 'Password'),
+      city: validateRequired(city, 'City'),
+      district: validateRequired(district, 'District'),
+      classLevel: validateRequired(classLevel, 'Class'),
+      branch: validateRequired(branch, 'Branch'),
+      school: validateRequired(school, 'School'),
+    };
 
-    // Validate using Yup
-    try {
-      await validationSchema.validate(
-        {
-          email,
-          phone,
-          firstName,
-          lastName,
-          password,
-          city,
-          district,
-          classLevel,
-          branch,
-          school,
-        },
-        { abortEarly: false }
-      );
-
-      // Fetch user data from the server
-      const response = await fetch('http://localhost:8000/data');
-      const data = await response.json();
-
-      // Ensure data is an array
-      const users = Array.isArray(data) ? data : [];
-
-      // Validate input and perform login
-      const user = login(users, username, password);
-      if (user) {
-        onLogin(username);
-        setMessage(`Welcome, ${user.username}!`);
-      } else {
-        setMessage('User not found.');
-      }
-    } catch (err) {
-      // Set validation errors
-      const validationErrors = err.inner.reduce((acc, error) => {
-        acc[error.path] = error.message;
-        return acc;
-      }, {});
-      setErrors(validationErrors);
+    setErrors(newErrors);
+    
+    if (Object.values(newErrors).some((error) => error)) {
       setMessage('Please fix the errors before submitting');
+      return;
+    }
+
+    // Fetch user data from the server
+    const response = await fetch('http://localhost:8000/data');
+    const data = await response.json();
+
+    // Ensure data is an array
+    const users = Array.isArray(data) ? data : [];
+
+    // Validate input and perform login
+    const user = login(users, username, password);
+    if (user) {
+      onLogin(username);
+      setMessage(`Welcome, ${user.username}!`);
+    } else {
+      setMessage('User not found.');
     }
   };
 
